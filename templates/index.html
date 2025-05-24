@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Predicción de Enfermedad Cardíaca</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <script>
+      function toggleHelp() {
+        const helpContent = document.querySelector(".help-content");
+        helpContent.classList.toggle("visible");
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Formulario de evaluación cardíaca</h1>
+
+      <div class="help-toggle" onclick="toggleHelp()">
+        ¿Necesitas ayuda con los campos?
+      </div>
+
+      <div class="help-content">
+        <ul>
+          <li><strong>Age</strong>: Edad del paciente (en años).</li>
+          <li><strong>Sex</strong>: Sexo del paciente.</li>
+          <li>
+            <strong>ChestPainType</strong>: Tipo de dolor torácico: TA (angina
+            típica), ATA (angina atípica), NAP (dolor no anginoso), ASY
+            (asintomático).
+          </li>
+          <li><strong>Cholesterol</strong>: Nivel de colesterol (en mg/dl).</li>
+          <li>
+            <strong>FastingBS</strong>: Nivel de glucosa en sangre en ayunas.
+          </li>
+          <li>
+            <strong>MaxHR</strong>: Frecuencia cardíaca máxima alcanzada durante
+            el esfuerzo, expresada como un valor numérico entero.
+          </li>
+          <li>
+            <strong>ExerciseAngina</strong>: Presencia de angina inducida por el
+            ejercicio físico.
+          </li>
+          <li>
+            <strong>Oldpeak</strong>: Depresión del segmento ST inducida por el
+            esfuerzo físico.
+          </li>
+          <li>
+            <strong>ST_Slope</strong>: Pendiente del segmento ST durante el pico
+            del ejercicio.
+          </li>
+        </ul>
+      </div>
+
+      <form method="post">
+        <label>Edad: </label>
+        <input type="number" name="Age" required />
+
+        <label>Sexo:</label>
+        <select name="Sex">
+          <option value="M">Masculino</option>
+          <option value="F">Femenino</option>
+        </select>
+
+        <label>Tipo de dolor torácico:</label>
+        <select name="ChestPainType">
+          <option value="TA">Angina típica</option>
+          <option value="ATA">Angina atípica</option>
+          <option value="NAP">Dolor no anginoso</option>
+          <option value="ASY">Asintomático</option>
+        </select>
+
+        <label
+          >Colesterol:
+          <small class="hint">(125 - 250 mg/dl)</small>
+        </label>
+        <input type="number" name="Cholesterol" required />
+
+        <label>Glucosa en ayunas > 120 mg/dl:</label>
+        <select name="FastingBS">
+          <option value="1">Sí</option>
+          <option value="0">No</option>
+        </select>
+
+        <label
+          >Frecuencia cardíaca máxima:
+          <small class="hint">(60 - 202 lpm)</small>
+        </label>
+        <input type="number" name="MaxHR" required />
+
+        <label>Angina inducida por ejercicio:</label>
+        <select name="ExerciseAngina">
+          <option value="Y">Sí</option>
+          <option value="N">No</option>
+        </select>
+
+        <label
+          >Oldpeak:
+          <small class="hint">(0.0 - 6.0)</small>
+        </label>
+        <input type="number" step="any" name="Oldpeak" required />
+
+        <label>Pendiente ST:</label>
+        <select name="ST_Slope">
+          <option value="Up">Ascendente</option>
+          <option value="Flat">Plana</option>
+          <option value="Down">Descendente</option>
+        </select>
+
+        <input type="submit" value="Predecir" />
+      </form>
+
+      {% if prediction is not none %}
+      <div
+        class="result {% if probability < 30 %}low{% elif probability < 60 %}medium{% else %}high{% endif %}"
+      >
+        <strong>
+          {% if probability < 30 %} ✅ No hay indiciosde enfermedad cardíaca.{%
+          elif probability < 60 %} ⚠️ Riesgo moderado de enfermedad cardíaca.
+          Consulte con su médico para una revisión preventiva.{% else %} 🚨
+          Riesgo alto de enfermedad cardíaca detectado. Es recomendable visitar
+          un cardiólogo y realizar pruebas diagnósticas.{% endif %}
+        </strong>
+        <strong>Probabilidad estimada: {{ probability }}%.</strong>
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>

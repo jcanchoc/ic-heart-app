@@ -1,0 +1,171 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap");
+
+:root {
+  --primary: #e63946;
+  --primary-dark: #c62828;
+  --background: #f8f9fa;
+  --surface: #ffffff;
+  --text: #1d3557;
+  --text-light: #6c757d;
+  --border: #dee2e6;
+  --shadow: rgba(0, 0, 0, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background-color: var(--background);
+  /* background: linear-gradient(to bottom, rgb(255, 215, 218), #f8f9fa); */
+  color: var(--text);
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  background: var(--surface);
+  width: 100%;
+  max-width: 600px;
+  padding: 40px 32px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+h1 {
+  text-align: center;
+  color: var(--primary);
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+form label {
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+input[type="number"],
+input[type="text"],
+select {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: border-color 0.2s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+input[type="submit"] {
+  background-color: var(--primary);
+  color: white;
+  font-weight: 600;
+  font-size: 1.05rem;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+input[type="submit"]:hover {
+  background-color: var(--primary-dark);
+}
+
+.result {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.result.high {
+  background-color: #ffe5e5;
+  color: #d32f2f;
+  border: 2px solid #d32f2f;
+}
+
+.result.medium {
+  background-color: rgb(252, 242, 216);
+  color: rgb(221, 178, 61);
+  border: 2px solid rgb(221, 178, 61);
+}
+
+.result.low {
+  background-color: #e0f2f1;
+  color: #2e7d32;
+  border: 2px solid #2e7d32;
+}
+
+.help-toggle {
+  display: inline-block;
+  cursor: pointer;
+  color: var(--primary);
+  font-size: 0.95rem;
+  text-decoration: underline;
+  text-align: right;
+  margin: 20px 0;
+}
+
+.help-content {
+  display: none;
+  background-color: #f1f3f5;
+  border-left: 4px solid var(--primary);
+  padding: 16px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.help-content.visible {
+  display: block;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* antes 20px */
+}
+
+form label {
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+input[type="number"],
+input[type="text"],
+select {
+  padding: 10px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+}
+
+small.hint {
+  font-weight: normal;
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-left: 8px;
+}
