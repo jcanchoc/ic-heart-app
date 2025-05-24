@@ -14,6 +14,7 @@
       }
     </script>
   </head>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <body>
     <div class="container">
       <h1>Formulario de evaluación cardíaca</h1>
@@ -24,32 +25,33 @@
 
       <div class="help-content">
         <ul>
-          <li><strong>Age</strong>: Edad del paciente (en años).</li>
-          <li><strong>Sex</strong>: Sexo del paciente.</li>
+          <li><strong>Edad</strong>: Edad del paciente (en años).</li>
+          <li><strong>Sexo</strong>: Sexo del paciente.</li>
           <li>
-            <strong>ChestPainType</strong>: Tipo de dolor torácico: TA (angina
-            típica), ATA (angina atípica), NAP (dolor no anginoso), ASY
-            (asintomático).
+            <strong>Tipo de dolor torácico</strong>: TA (angina típica), ATA
+            (angina atípica), NAP (dolor no anginoso), ASY (asintomático).
           </li>
-          <li><strong>Cholesterol</strong>: Nivel de colesterol (en mg/dl).</li>
+          <li><strong>Colesterol</strong>: Nivel de colesterol (en mg/dl).</li>
           <li>
-            <strong>FastingBS</strong>: Nivel de glucosa en sangre en ayunas.
-          </li>
-          <li>
-            <strong>MaxHR</strong>: Frecuencia cardíaca máxima alcanzada durante
-            el esfuerzo, expresada como un valor numérico entero.
+            <strong>Glucosa en ayunas</strong>: Nivel de glucosa en sangre en
+            ayunas. Indicar si es mayor a 120 mg/dl.
           </li>
           <li>
-            <strong>ExerciseAngina</strong>: Presencia de angina inducida por el
-            ejercicio físico.
+            <strong>Frecuencia cardíaca máxima</strong>: Frecuencia cardíaca
+            máxima alcanzada durante el esfuerzo, expresada en latidos por
+            minuto.
+          </li>
+          <li>
+            <strong>Angina inducida por ejercicio</strong>: Presencia de angina
+            inducida por el ejercicio físico.
           </li>
           <li>
             <strong>Oldpeak</strong>: Depresión del segmento ST inducida por el
             esfuerzo físico.
           </li>
           <li>
-            <strong>ST_Slope</strong>: Pendiente del segmento ST durante el pico
-            del ejercicio.
+            <strong>Pendiente del segmento ST</strong>: Pendiente del segmento
+            ST durante el pico del ejercicio.
           </li>
         </ul>
       </div>
@@ -117,13 +119,80 @@
         class="result {% if probability < 30 %}low{% elif probability < 60 %}medium{% else %}high{% endif %}"
       >
         <strong>
-          {% if probability < 30 %} ✅ No hay indiciosde enfermedad cardíaca.{%
-          elif probability < 60 %} ⚠️ Riesgo moderado de enfermedad cardíaca.
-          Consulte con su médico para una revisión preventiva.{% else %} 🚨
-          Riesgo alto de enfermedad cardíaca detectado. Es recomendable visitar
-          un cardiólogo y realizar pruebas diagnósticas.{% endif %}
+          {% if probability < 30 %} ✅ No hay indicios de enfermedad cardíaca.{%
+          elif probability < 60 %} ⚠️ Riesgo moderado de enfermedad cardíaca.{%
+          else %} 🚨 Riesgo alto de enfermedad cardíaca detectado. {% endif %}
         </strong>
-        <strong>Probabilidad estimada: {{ probability }}%.</strong>
+        <!-- <strong>Probabilidad estimada: {{ probability }}%.</strong> -->
+      </div>
+
+      <div class="chart-container" style="max-width: 300px; margin: 20px auto">
+        <canvas id="riskGauge"></canvas>
+      </div>
+
+      <script>
+        const ctx = document.getElementById('riskGauge').getContext('2d');
+
+        const riskValue = {{ probability }};  // Probabilidad del modelo
+
+        const riskColor = riskValue < 30
+          ? '#28a745'  // verde
+          : riskValue < 60
+          ? '#ddb23d'  // amarillo
+          : '#d32f2f'; // rojo
+
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            datasets: [{
+              data: [riskValue, 100 - riskValue],
+              backgroundColor: [riskColor, '#e9ecef'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            cutout: '80%',
+            plugins: {
+              tooltip: { enabled: false },
+              legend: { display: false },
+            }
+          },
+          plugins: [{
+            id: 'text',
+            beforeDraw(chart) {
+              const { width } = chart;
+              const ctx = chart.ctx;
+              ctx.restore();
+              const fontSize = (width / 13).toFixed(2);
+              ctx.font = fontSize + "px Arial";
+              ctx.textBaseline = "middle";
+              ctx.textAlign = "center";
+              const text = "Probabilidad: " + riskValue + "%";
+              const textX = chart.getDatasetMeta(0).data[0].x;
+              const textY = chart.getDatasetMeta(0).data[0].y;
+              ctx.fillStyle = riskColor;
+              ctx.fillText(text, textX, textY);
+              ctx.save();
+            }
+          }]
+        });
+      </script>
+      <div
+        class="recommendation {% if probability < 30 %}low{% elif probability < 60 %}medium{% else %}high{% endif %}"
+        style="max-width: 500px; margin: 20px auto; padding: 15px; border-left: 6px solid {% if probability < 30 %}#2e7d32{% elif probability < 60 %}#ddb23d{% else %}#d32f2f{% endif %}; background-color: #f8f9fa; border-radius: 8px;"
+      >
+        <h3 style="margin-top: 0">Recomendaciones</h3>
+        <p>
+          {% if probability < 30 %} Todo parece estar bien. Mantenga un estilo
+          de vida saludable con una dieta equilibrada y ejercicio regular para
+          seguir cuidando su salud cardiovascular. {% elif probability < 60 %}
+          Sería recomendable consultar a su médico para una evaluación
+          preventiva más detallada. Considere revisar su presión arterial,
+          niveles de colesterol y estilo de vida. {% else %} Dado el riesgo
+          elevado, se recomienda encarecidamente una visita al cardiólogo para
+          realizar pruebas diagnósticas como un electrocardiograma o una prueba
+          de esfuerzo. {% endif %}
+        </p>
       </div>
       {% endif %}
     </div>
